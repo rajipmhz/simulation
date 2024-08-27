@@ -1,0 +1,668 @@
+1. Write a program to random number using Mid-Square Method.
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+int midSquare(int seed, int numDigits) {
+int squared = seed * seed;
+int squaredDigits = (int)log10(squared) + 1;
+int leadingZeros = (numDigits * 2)- squaredDigits;
+char squaredStr[20];
+snprintf(squaredStr, sizeof(squaredStr), "%0*d", leadingZeros + squaredDigits, 
+squared);
+int start = (leadingZeros + squaredDigits) / 2- (numDigits / 2);
+char midDigits[10];
+strncpy(midDigits, squaredStr + start, numDigits);
+midDigits[numDigits] = '\0'; 
+return atoi(midDigits);
+}
+int main() {
+int i, seed, numDigits, count;
+printf("Enter initial seed: ");
+scanf("%d", &seed);
+printf("Enter number of digits to extract: ");
+scanf("%d", &numDigits);
+printf("Enter the number of random numbers to generate: ");
+scanf("%d", &count);
+printf("Generated random numbers:\n");
+for (i = 0; i < count; i++) {
+seed = midSquare(seed, numDigits);
+printf("%d\n", seed);
+}
+return 0;
+}
+
+2. Write a program to implement the LCG.
+#include <stdio.h>
+unsigned int lcg(unsigned int *seed, unsigned int a, unsigned int c, unsigned int 
+m) {
+*seed = (a * (*seed) + c) % m;
+return *seed;
+}
+int main() {
+unsigned int i,seed, a, c, m, count;
+printf("Enter initial seed: ");
+scanf("%u", &seed);
+printf("Enter multiplier (a): ");
+scanf("%u", &a);
+printf("Enter increment (c): ");
+scanf("%u", &c);
+printf("Enter modulus (m): ");
+scanf("%u", &m);
+printf("Enter the number of random numbers to generate: ");
+scanf("%u", &count);
+printf("Generated random numbers:\n");
+for (i = 0; i < count; i++) {
+unsigned int randomNumber = lcg(&seed, a, c, m);
+printf("%u\n", randomNumber);
+}
+return 0;
+}
+
+
+3. Write a program to implement the Drunkard Problem.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+void randomWalk(int *x, int *y, int steps) {
+ int i;
+ printf("| Step | Direction | New Position (x, y) |\n");
+ printf("|------|-----------|---------------------|\n");
+ printf("| 0 | - | (%d, %d) |\n", *x, *y);
+ for (i = 0; i < steps; i++) {
+ int direction = rand() % 4; // Random number between 0 and 3
+ switch (direction) {
+ case 0: (*x)++; 
+printf("| %-4d | Right | (%d, %d) |\n", i + 1, *x, *y); 
+break; // Move right
+ case 1: (*x)--; 
+printf("| %-4d | Left | (%d, %d) |\n", i + 1, *x, *y); 
+break; // Move left
+ case 2: (*y)++; 
+printf("| %-4d | Up | (%d, %d) |\n", i + 1, *x, *y); 
+break; // Move up
+ case 3: (*y)--; 
+printf("| %-4d | Down | (%d, %d) |\n", i + 1, *x, *y); 
+break; // Move down } } }
+int main() {
+ int x = 0, y = 0; // Starting position
+ int steps;
+ srand(time(NULL)); // Seed for random number generation
+ printf("Enter the number of steps for the random walk: ");
+ scanf("%d", &steps);
+ randomWalk(&x, &y, steps);
+ printf("| Final position after %d steps: (%d, %d) |\n", steps, x, y);
+ return 0;
+}
+
+4. Write a program to calculate the value of PI using Monte Carlo Method.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+int main() {
+ long long int totalPoints = 0;
+ long long int insideCircle = 0;
+ int numSamples,i;
+ printf("Enter the number of random samples: ");
+ scanf("%d", &numSamples);
+ srand(time(NULL));
+ for (i = 0; i < numSamples; i++) {
+ double x = (double)rand() / RAND_MAX; 
+ double y = (double)rand() / RAND_MAX; 
+ if ((x * x + y * y) <= 1) {
+ insideCircle++;
+ }
+ totalPoints++;
+ }
+ double piEstimate = (4.0 * insideCircle) / totalPoints;
+ printf("Estimated value of Pi after %d samples: %lf\n", numSamples, 
+piEstimate);
+ return 0;
+}
+
+
+5. Write a program to calculate the Area of Circle using Monte Carlo Method.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+double estimateCircleArea(int numSamples, double radius) {
+ long long int insideCircle = 0;
+ int i;
+for (i = 0; i < numSamples; i++) {
+ double x = ((double)rand() / RAND_MAX) * 2 * radius - radius; 
+ double y = ((double)rand() / RAND_MAX) * 2 * radius - radius; 
+ if ((x * x + y * y) <= (radius * radius)) {
+ insideCircle++;
+ } }
+ double area = (4.0 * radius * radius) * ((double)insideCircle / numSamples);
+ return area;}
+int main() {
+ int numSamples;
+ double radius;
+ printf("Enter the number of random samples: ");
+ scanf("%d", &numSamples);
+ printf("Enter the radius of the circle: ");
+ scanf("%lf", &radius);
+ srand(time(NULL));
+10
+ Rajip_28991_SimulationLab_Nagarjuna
+ double estimatedArea = estimateCircleArea(numSamples, radius);
+ printf("Estimated area of the circle with radius %.2lf after %d samples: 
+%lf\n", radius, numSamples, estimatedArea);
+ return 0;
+}
+
+6. Write a program to implement Kolmogorov Smirnov Test.
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define MAX_SAMPLES 1000
+double uniformCDF(double x) {
+ return (x >= 1.0) ? 1.0 : (x <= 0.0) ? 0.0 : x;
+}
+void ksTest(double *data, int n) {
+ double sortedData[MAX_SAMPLES];
+ int i,j;
+for ( i = 0; i < n; i++) {
+ sortedData[i] = data[i];
+ }
+ for (i = 0; i < n - 1; i++) {
+ for ( j = 0; j < n - i - 1; j++) {
+ if (sortedData[j] > sortedData[j + 1]) {
+ double temp = sortedData[j];
+ sortedData[j] = sortedData[j + 1];
+ sortedData[j + 1] = temp;
+ }
+ }
+ }
+ double D_plus = 0.0;
+ double D_minus = 0.0;
+ for (i = 0; i < n; i++) {
+ double empiricalCDF = (double) (i + 1) / n;
+ double theoreticalCDF = uniformCDF(sortedData[i]);
+ D_plus = fmax(D_plus, empiricalCDF - theoreticalCDF);
+ D_minus = fmax(D_minus, theoreticalCDF - (double) i / n);
+ printf("| %-6d | %-12.4lf | %-13.4lf | %-15.4lf | %-12.4lf |\n",
+ i + 1, sortedData[i], empiricalCDF, theoreticalCDF, 
+fmax(empiricalCDF - theoreticalCDF, theoreticalCDF - (double) i / n));
+ }
+ double D = fmax(D_plus, D_minus);
+ printf("--------------------------------------------------------\n");
+ printf("D+ = %.4f\n", D_plus);
+ printf("D- = %.4f\n", D_minus);
+ printf("D = %.4f\n", D);
+}
+int main() {
+ int n;
+ double data[MAX_SAMPLES];
+ printf("Enter the number of samples (up to %d): ", MAX_SAMPLES);
+ scanf("%d", &n);
+ if (n > MAX_SAMPLES) {
+ printf("Error: Number of samples exceeds the maximum limit.\n");
+ return 1;
+ }
+ printf("Enter the samples (between 0 and 1):\n");
+ int i;
+for (i = 0; i < n; i++) {
+ scanf("%lf", &data[i]);
+ }
+ printf("\n");
+printf("| Sample | Sorted Data | Empirical CDF | Theoretical CDF | Max Diff 
+|\n");
+printf("|--------|--------------|---------------|-----------------|--------------|\n");
+ ksTest(data, n);
+ printf("--------------------------------------------------------\n");
+ return 0;
+}
+
+7. Write a program to implement the Chi-Square Test.
+#include <stdio.h>
+void calculateChiSquare(int observed[], double expected[], int size) {
+ double chiSquare = 0.0;
+ printf("| Category | Observed | Expected | (O - E)^2 / E |\n");
+ printf("|----------|----------|----------|---------------|\n");
+ int i;
+ for (i = 0; i < size; i++) {
+ double difference = observed[i] - expected[i];
+ double term = (difference * difference) / expected[i];
+ chiSquare += term;
+ printf("| %-8d | %-8d | %-8.2lf | %-13.2lf |\n", i + 1, observed[i], 
+expected[i], term); }
+ printf("-------------------------------------------------\n");
+ printf("Calculated Chi-Square statistic: %.2f\n", chiSquare); }
+int main() {
+ int size,i;
+ printf("Enter the number of categories: ");
+ scanf("%d", &size);
+ int observed[size];
+ double expected[size];
+ printf("\nEnter the observed frequencies:\n");
+ for (i = 0; i < size; i++) {
+ printf("Observed for category %d: ", i + 1);
+ scanf("%d", &observed[i]);
+ }
+ printf("\nEnter the expected frequencies:\n");
+ for (i = 0; i < size; i++) {
+ printf("Expected for category %d: ", i + 1);
+ scanf("%lf", &expected[i]);
+ }
+ printf("\n");
+ calculateChiSquare(observed, expected, size);
+ return 0;
+}
+
+8. Write a program to implement the Poker Test.
+#include <stdio.h>
+#include <stdlib.h>
+#define HAND_SIZE 5
+#define NUM_CARDS 13 // Cards from 1 to 13
+void countCards(int hand[], int counts[]) {
+int i;
+for (i = 0; i < HAND_SIZE; i++) {
+counts[hand[i]- 1]++; }}
+void evaluateHand(int hand[]) {
+int counts[NUM_CARDS] = {0}; 
+countCards(hand, counts);
+int i,pairs = 0, threes = 0, fours = 0;
+for (i = 0; i < NUM_CARDS; i++) {
+if (counts[i] == 2) pairs++;
+else if (counts[i] == 3) threes++;
+else if (counts[i] == 4) fours++; }
+if (fours > 0) {
+printf("Four of a Kind\n");
+} else if (threes > 0 && pairs > 0) {
+printf("Full House\n");
+} else if (threes > 0) {
+printf("Three of a Kind\n");
+} else if (pairs > 1) {
+printf("Two Pair\n");
+} else if (pairs == 1) {
+printf("One Pair\n");
+} else {
+printf("High Card\n"); } }
+int main() {
+int hand[HAND_SIZE],i;
+printf("Enter your poker hand (5 card values between 1 and 13):\n");
+for ( i = 0; i < HAND_SIZE; i++) {
+printf("Card %d: ", i + 1);
+scanf("%d", &hand[i]);
+if (hand[i] < 1 || hand[i] > NUM_CARDS) {
+printf("Invalid card value! Please enter a value between 1 and 13.\n");
+return 1; } }
+evaluateHand(hand); 
+return 0;
+}
+
+
+9. Write a program to implement the Auto Correlation Test.
+#include <stdio.h>
+void calculateAutocorrelation(double data[], int n, int lag) {
+double mean = 0.0, autocorr = 0.0;
+int i;
+for ( i = 0; i < n; i++) {
+mean += data[i];}
+mean /= n;
+for (i = 0; i < n- lag; i++) {
+autocorr += (data[i]- mean) * (data[i + lag]- mean);
+}autocorr /= (n- lag);
+printf("Autocorrelation at lag %d: %.6f\n", lag, autocorr);
+}
+int main() {
+int n,i, lag;
+printf("Enter the number of data points: ");
+scanf("%d", &n);
+double data[n];
+printf("Enter the data points:\n");
+for (i = 0; i < n; i++) {
+printf("Data point %d: ", i + 1);
+scanf("%lf", &data[i]);
+}
+printf("Enter the lag (1 to %d): ", n- 1);
+scanf("%d", &lag);
+if (lag < 1 || lag >= n) {
+printf("Invalid lag value! Please enter a lag between 1 and %d.\n", n- 1);
+return 1;
+}
+calculateAutocorrelation(data, n, lag);
+return 0;
+}
+
+10. Write a program to implement the Gap Test.
+#include <stdio.h>
+void gapTest(int data[], int n, int value) {
+int gap = 0; 
+int gapCount = 0; 
+int i;
+for (i = 0; i < n; i++) {
+if (data[i] == value) {
+if (gap > 0) {
+gapCount++;
+printf("Gap of %d found before %d at index %d\n", gap, value, i);
+}
+gap = 0; 
+} else {
+gap++; 
+}
+}
+printf("Total gaps before occurrences of %d: %d\n", value, gapCount);
+}
+int main() {
+int n,i, value;
+printf("Enter the number of data points: ");
+scanf("%d", &n);
+int data[n];
+printf("Enter the data points:\n");
+for ( i = 0; i < n; i++) {
+printf("Data point %d: ", i + 1);
+scanf("%d", &data[i]);
+}
+printf("Enter the value to test gaps for: ");
+scanf("%d", &value);
+gapTest(data, n, value);
+return 0;
+}
+
+
+11. Write a program to implement the Queuing System.
+#include <stdio.h>
+int main() {
+double lambda; 
+double mu; 
+double rho; 
+double L;
+double LB; 
+double W;
+double WQ; 
+printf("Enter the arrival rate (lambda): ");
+scanf("%lf", &lambda);
+printf("Enter the service rate (mu): ");
+scanf("%lf", &mu);
+// Calculate utilization
+rho = lambda / mu;
+// Check if the system is stable
+if (rho >= 1) {
+printf("The system is unstable (rho >= 1)Cannot compute performance 
+measures.\n");
+return 1;
+}
+L =lambda / (mu- lambda);
+LB = L-(lambda / mu);
+W=1/(mu-lambda);
+WQ=W-(1/mu);
+printf("Performance Measures:\n");
+printf("L (Average number of customers in the system): %.2f\n", L);
+printf("LB (Average number of customers in the queue): %.2f\n", LB);
+printf("W (Average time a customer spends in the system): %.2f\n", W);
+printf("WQ (Average time a customer spends waiting in the queue): %.2f\n", 
+WQ);
+printf("P (Utilization of the server): %.2f\n", rho);
+return 0;
+}
+
+
+12a. Write a program to implement manufactuing shop model of GPSS.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX_QUEUE_SIZE 100
+typedef struct {
+ int queue[MAX_QUEUE_SIZE];
+ int front;
+ int rear;
+} Queue;
+void initQueue(Queue *q) {
+ q->front = 0;
+ q->rear = 0;
+}
+int isQueueFull(Queue *q) {
+ return ((q->rear + 1) % MAX_QUEUE_SIZE) == q->front;
+}
+int isQueueEmpty(Queue *q) {
+ return q->front == q->rear;
+}
+void enqueue(Queue *q, int item) {
+ if (!isQueueFull(q)) {
+ q->queue[q->rear] = item;
+ q->rear = (q->rear + 1) % MAX_QUEUE_SIZE;
+ } else {
+ printf("Queue is full!\n");
+ }
+}
+int dequeue(Queue *q) {
+ if (!isQueueEmpty(q)) {
+ int item = q->queue[q->front];
+ q->front = (q->front + 1) % MAX_QUEUE_SIZE;
+ return item;
+ }
+ return -1; // Indicate an empty queue
+}
+void processJobs(Queue *queue, int machineId) {
+ while (!isQueueEmpty(queue)) {
+ int job = dequeue(queue);
+ printf("| %-9d | %-9d | %-14d |\n", machineId, job, rand() % 3 + 1); // Print 
+machine, job, and processing time
+ }
+}
+int main() {
+ srand(time(NULL)); // Seed for random number generation
+ Queue jobQueue;
+ initQueue(&jobQueue);
+ int i,numJobs, numMachines;
+ printf("Enter the number of jobs: ");
+ scanf("%d", &numJobs);
+ printf("Enter the number of machines: ");
+ scanf("%d", &numMachines);
+ for ( i = 0; i < numJobs; i++) {
+ enqueue(&jobQueue, i + 1);
+ }
+ printf("| Machine | Job | Processing Time |\n");
+ printf("|-----------|-----------|-----------------|\n");
+ for (i = 0; i < numMachines; i++) {
+ processJobs(&jobQueue, i + 1);
+ }
+ return 0;
+}
+
+
+12b. Write a program to implement manufacturing shop model 2 of GPSS.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX_QUEUE_SIZE 100
+typedef struct {
+ int queue[MAX_QUEUE_SIZE];
+ int front;
+ int rear;
+} Queue;
+void initQueue(Queue *q) {
+ q->front = 0;
+ q->rear = 0;
+}
+int isQueueFull(Queue *q) {
+ return ((q->rear + 1) % MAX_QUEUE_SIZE) == q->front;
+}
+int isQueueEmpty(Queue *q) {
+ return q->front == q->rear;
+}
+void enqueue(Queue *q, int item) {
+ if (!isQueueFull(q)) {
+ q->queue[q->rear] = item;
+ q->rear = (q->rear + 1) % MAX_QUEUE_SIZE;
+ } else {
+ printf("Queue is full!\n"); } }
+int dequeue(Queue *q) {
+ if (!isQueueEmpty(q)) {
+ int item = q->queue[q->front];
+ q->front = (q->front + 1) % MAX_QUEUE_SIZE;
+ return item;
+ }
+ return -1; // Indicate an empty queue
+}
+void processJobAtMachine(int job, int machineId) {
+printf("Machine %d processing job %d\n", machineId, job);
+ int processingTime = rand() % 3 + 1; // Random processing time between 1 
+and 3
+ printf("Machine %d finished job %d in %d seconds\n", machineId, 
+job, processingTime); // Print machine, job, and processing time
+}
+void processJobsThroughMachines(Queue *jobQueue, int numMachines) {
+ while (!isQueueEmpty(jobQueue)) {
+ int job = dequeue(jobQueue);
+ int i;
+for ( i = 1; i <= numMachines; i++) {
+ processJobAtMachine(job, i);
+ }
+} }
+int main() {
+ srand(time(NULL)); // Seed for random number generation
+ Queue jobQueue;
+ initQueue(&jobQueue);
+ int i,numJobs, numMachines;
+ printf("Enter the number of jobs: ");
+ scanf("%d", &numJobs);
+ printf("Enter the number of machines: ");
+ scanf("%d", &numMachines);
+ for (i = 0; i < numJobs; i++) {
+ enqueue(&jobQueue, i + 1);
+ }
+ processJobsThroughMachines(&jobQueue, numMachines);
+ return 0;
+}
+
+
+12c. Write a program to implement manufacturing shop model 3 of GPSS.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX_QUEUE_SIZE 100
+typedef struct {
+int queue[MAX_QUEUE_SIZE];
+int front;
+int rear;
+} Queue;
+void initQueue(Queue *q) {
+q->front = 0;
+q->rear = 0; }
+int isQueueFull(Queue *q) {
+return ((q->rear + 1) % MAX_QUEUE_SIZE) == q->front; }
+int isQueueEmpty(Queue *q) {
+return q->front == q->rear; }
+void enqueue(Queue *q, int item) {
+if (!isQueueFull(q)) {
+q->queue[q->rear] = item;
+q->rear = (q->rear + 1) % MAX_QUEUE_SIZE;
+} else {
+printf("Queue is full!\n"); } }
+int dequeue(Queue *q) {
+if (!isQueueEmpty(q)) {
+int item = q->queue[q->front];
+q->front = (q->front + 1) % MAX_QUEUE_SIZE;
+return item; }
+return-1; // Indicate an empty queue
+}
+void processJobAtMachine(int job, int machineId) {
+printf("Machine %d processing job %d\n", machineId, job);
+int processingTime = rand() % 3 + 1; 
+printf("Machine %d finished job %d in %d seconds\n", machineId, job, 
+processingTime);
+}
+void processJob(int job) {
+// Process through Primary Machine
+processJobAtMachine(job, 1);
+// Condition to determine if it goes to Secondary Machine
+if (rand() % 2 == 0) { // 50% chance to go to Secondary Machine
+printf("Job %d requires secondary processing.\n", job);
+processJobAtMachine(job, 2);
+} else {
+printf("Job %d does not require secondary processing.\n", job);
+}
+}
+int main() {
+srand(time(NULL)); // Seed for random number generation
+Queue jobQueue;
+initQueue(&jobQueue);
+int i, numJobs;
+// User input for number of jobs
+printf("Enter the number of jobs: ");
+scanf("%d", &numJobs);
+// Simulating job arrivals
+for (i = 0; i < numJobs; i++) {
+enqueue(&jobQueue, i + 1);
+}
+while (!isQueueEmpty(&jobQueue)) {
+int job = dequeue(&jobQueue);
+processJob(job);
+}
+return 0;
+}
+
+12d. Write a program to implement manufacturing shop model 4 of GPSS.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX_QUEUE_SIZE 100
+typedef struct {
+ int queue[MAX_QUEUE_SIZE];
+ int front;
+ int rear;
+} Queue;
+void initQueue(Queue *q) {
+ q->front = 0;
+ q->rear = 0; }
+int isQueueFull(Queue *q) {
+ return ((q->rear + 1) % MAX_QUEUE_SIZE) == q->front;
+}
+int isQueueEmpty(Queue *q) {
+ return q->front == q->rear;
+}
+void enqueue(Queue *q, int item) {
+ if (!isQueueFull(q)) {
+ q->queue[q->rear] = item;
+ q->rear = (q->rear + 1) % MAX_QUEUE_SIZE;
+ } else {
+ printf("Queue is full!\n"); }}
+int dequeue(Queue *q) {
+ if (!isQueueEmpty(q)) {
+ int item = q->queue[q->front];
+ q->front = (q->front + 1) % MAX_QUEUE_SIZE;
+ return item;
+ }
+ return -1; // Indicate an empty queue
+}
+void processJobAtMachine(int job, int machineId) {
+printf("Machine %d processing job %d\n", machineId, job);
+int processingTime = rand() % 3 + 1; 
+printf("Machine %d finished job %d in %d seconds\n", machineId, job, 
+processingTime); }
+void processJob(int job) {
+ int priority = rand() % 2; // Random priority (0 or 1)
+ if (priority == 0) {
+ printf("Job %d has high priority.\n", job);
+ processJobAtMachine(job, 1);
+ processJobAtMachine(job, 2);
+ } else {
+ printf("Job %d has low priority.\n", job);
+ processJobAtMachine(job, 3);
+ if (rand() % 2 == 0) {
+ printf("Job %d skips Machine 2.\n", job);
+ } else {
+ processJobAtMachine(job, 2);
+ } }
+int main() {
+ srand(time(NULL)); // Seed for random number generation
+ Queue jobQueue;
+ initQueue(&jobQueue);
+ int i, numJobs;
+ printf("Enter the number of jobs: ");
+ scanf("%d", &numJobs);
+ for (i = 0; i < numJobs; i++) {
+ enqueue(&jobQueue, i + 1); }
+ while (!isQueueEmpty(&jobQueue)) {
+ int job = dequeue(&jobQueue);
+ processJob(job); }
+ return 0;
+}
+
+
+
+
